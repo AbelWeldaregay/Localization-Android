@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip">
+
+    <LinearLayout android:orientation="vertical"
+       android:layout_width="fill_parent"
+        android:layout_height="fill_parent" android:id="@+id/TextLayout">
+        <TextView android:id="@+id/longTextView" android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center_vertical" android:textSize="18sp"
+            android:textColor="#FFFFFF" android:background="@color/colorPrimaryDark" />
+
+        <TextView android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/latTextView"
+            android:singleLine="true" android:ellipsize="marquee"
+            android:scrollbars = "vertical"
+            android:textSize="15sp" android:textColor="#FFFFFF"
+            android:background="#FFBBAACC" />
+        <TextView android:id="@+id/timeTextView" android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center_vertical" android:textSize="18sp"
+            android:textColor="#FFFFFF" android:background="@color/colorPrimaryDark" />
+        <TextView android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/addressTextView"
+            android:singleLine="true" android:ellipsize="marquee"
+            android:scrollbars = "vertical"
+            android:textSize="15sp" android:textColor="#FFFFFF"
+            android:background="#FFBBAACC" />
+
+    </LinearLayout>
+</RelativeLayout>
