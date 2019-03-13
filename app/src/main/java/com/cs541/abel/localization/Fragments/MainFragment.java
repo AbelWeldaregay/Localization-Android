@@ -17,10 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.cs541.abel.localization.Adapters.LocationAdapter;
+import com.cs541.abel.localization.Models.DatabaseHelper;
 import com.cs541.abel.localization.R;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,8 +37,11 @@ public class MainFragment extends Fragment  {
     private TextView longitudeTextView;
     private TextView latitudeTextView;
     private TextView addressTextView;
-    LocationManager locationManager;
-    LocationListener locationListener;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private Button checkInButton;
+    private DatabaseHelper databaseHelper;
+
     Geocoder geocoder;
     List<Address> addresses;
     ArrayList<com.cs541.abel.localization.Models.Location> locations;
@@ -69,6 +74,8 @@ public class MainFragment extends Fragment  {
         this.latitudeTextView = view.findViewById(R.id.latitudeTextView);
         this.addressTextView = view.findViewById(R.id.addressTextView);
         this.locationsListView = view.findViewById(R.id.locationsListView);
+        this.checkInButton = view.findViewById(R.id.checkInButton);
+        this.databaseHelper = new DatabaseHelper(getContext());
 
         this.locations = new ArrayList<>();
         LocationAdapter locationAdapter = new LocationAdapter(getContext(), R.layout.locations_row, locations);
@@ -77,6 +84,13 @@ public class MainFragment extends Fragment  {
 
         this.locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
+
+        this.checkInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
 
         this.locationListener = new LocationListener() {
