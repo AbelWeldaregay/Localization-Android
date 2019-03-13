@@ -17,9 +17,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.cs541.abel.localization.Adapters.LocationAdapter;
 import com.cs541.abel.localization.R;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +39,8 @@ public class MainFragment extends Fragment  {
     LocationListener locationListener;
     Geocoder geocoder;
     List<Address> addresses;
+    ArrayList<com.cs541.abel.localization.Models.Location> locations;
+    ListView locationsListView;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -62,8 +68,16 @@ public class MainFragment extends Fragment  {
         this.longitudeTextView = view.findViewById(R.id.longitudeTextView);
         this.latitudeTextView = view.findViewById(R.id.latitudeTextView);
         this.addressTextView = view.findViewById(R.id.addressTextView);
+        this.locationsListView = view.findViewById(R.id.locationsListView);
+
+        this.locations = new ArrayList<>();
+        LocationAdapter locationAdapter = new LocationAdapter(getContext(), R.layout.locations_row, locations);
+        locationsListView.setAdapter(locationAdapter);
+
 
         this.locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+
 
         this.locationListener = new LocationListener() {
             @Override
@@ -116,11 +130,6 @@ public class MainFragment extends Fragment  {
             //we have permission
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this.locationListener);
         }
-
-
-
-
-
 
         return view;
     }

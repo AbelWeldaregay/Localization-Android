@@ -6,12 +6,18 @@ public class Location {
     private String latitude;
     private String time;
     private String address;
+    private String nickName;
 
-    public Location(String longitude, String latitude, String time, String address) {
+    public Location(String longitude, String latitude, String time, String address, String nickName) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.time = time;
         this.address = address;
+        this.nickName = nickName;
+    }
+
+    public String getNickName() {
+        return nickName;
     }
 
     public String getLongitude() {
