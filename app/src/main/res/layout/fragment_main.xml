@@ -35,6 +35,15 @@
             android:text="Address"
             android:textSize="24sp" />
 
+        <EditText
+            android:id="@+id/checkInNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="check-in location name"
+            android:inputType="textPersonName"
+            android:text="Name" />
+
         <Button
             android:id="@+id/checkInButton"
             android:layout_width="match_parent"

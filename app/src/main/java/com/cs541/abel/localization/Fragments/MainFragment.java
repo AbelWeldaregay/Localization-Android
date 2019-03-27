@@ -3,6 +3,7 @@ package com.cs541.abel.localization.Fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -20,9 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.cs541.abel.localization.Adapters.LocationAdapter;
-import com.cs541.abel.localization.Models.DatabaseHelper;
 import com.cs541.abel.localization.R;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,11 +39,10 @@ public class MainFragment extends Fragment  {
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Button checkInButton;
-    private DatabaseHelper databaseHelper;
+
 
     Geocoder geocoder;
     List<Address> addresses;
-    ArrayList<com.cs541.abel.localization.Models.Location> locations;
     ListView locationsListView;
 
     @Override
@@ -75,11 +73,10 @@ public class MainFragment extends Fragment  {
         this.addressTextView = view.findViewById(R.id.addressTextView);
         this.locationsListView = view.findViewById(R.id.locationsListView);
         this.checkInButton = view.findViewById(R.id.checkInButton);
-        this.databaseHelper = new DatabaseHelper(getContext());
+       // this.databaseHelper = new DatabaseHelper(getContext());
 
-        this.locations = new ArrayList<>();
-        LocationAdapter locationAdapter = new LocationAdapter(getContext(), R.layout.locations_row, locations);
-        locationsListView.setAdapter(locationAdapter);
+       // this.locations = new ArrayList<>();
+
 
 
         this.locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -89,8 +86,20 @@ public class MainFragment extends Fragment  {
             @Override
             public void onClick(View v) {
 
+                try {
+
+                    SQLiteDatabase sqLiteDatabase = getActivity().openOrCreateDatabase("CheckedInLocations", Context.MODE_PRIVATE, null);
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+
+                }
+
             }
         });
+
+
 
 
         this.locationListener = new LocationListener() {
@@ -107,12 +116,12 @@ public class MainFragment extends Fragment  {
                     String area = addresses.get(0).getLocality();
                     String city = addresses.get(0).getAdminArea();
                     String country = addresses.get(0).getCountryName();
-                    String postalcode = addresses.get(0).getPostalCode();
+                    String postalCode = addresses.get(0).getPostalCode();
 
-                    String fullAddress = address + ", " + area + ", "+city +", "+country+", "+postalcode;
+                    String fullAddress = address + ", " + area + ", " + city + ", " + country + ", " + postalCode;
 
                     addressTextView.setText(fullAddress);
-                } catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 

@@ -1,6 +1,6 @@
 package com.cs541.abel.localization.Models;
 
-public class Location {
+public class SavedLocation {
 
     private String longitude;
     private String latitude;
@@ -8,7 +8,7 @@ public class Location {
     private String address;
     private String nickName;
 
-    public Location(String longitude, String latitude, String time, String address, String nickName) {
+    public SavedLocation(String longitude, String latitude, String time, String address, String nickName) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.time = time;
@@ -16,8 +16,24 @@ public class Location {
         this.nickName = nickName;
     }
 
-    public String getNickName() {
-        return nickName;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getLongitude() {
@@ -36,19 +52,7 @@ public class Location {
         return address;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    public String getNickName() {
+        return nickName;
     }
 }

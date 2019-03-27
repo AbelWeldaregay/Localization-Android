@@ -1,6 +1,7 @@
 package com.cs541.abel.localization.Adapters;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.cs541.abel.localization.Models.Location;
+import com.cs541.abel.localization.Models.SavedLocation;
 import com.cs541.abel.localization.R;
 
 import java.util.ArrayList;
 
-public class LocationAdapter extends ArrayAdapter<Location> {
+public class LocationAdapter extends ArrayAdapter<SavedLocation> {
 
     public static final String TAG = "locationAdapter";
     private Context mContext;
@@ -29,7 +30,7 @@ public class LocationAdapter extends ArrayAdapter<Location> {
         TextView addressTextView;
     }
 
-    public LocationAdapter(Context context, int resource, ArrayList<Location> objects) {
+    public LocationAdapter(Context context, int resource, ArrayList<SavedLocation> objects) {
         super(context, resource, objects);
 
         this.mContext = context;
@@ -47,7 +48,7 @@ public class LocationAdapter extends ArrayAdapter<Location> {
         String time = getItem(position).getTime();
         String nickName = getItem(position).getNickName();
 
-        Location newLocation = new Location(longtitude, latitude, time, address, nickName);
+        SavedLocation newLocation = new SavedLocation(longtitude, latitude, time, address, nickName);
 
         ViewHolder holder;
 
