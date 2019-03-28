@@ -37,6 +37,17 @@ public class CheckedInLocation {
     @ColumnInfo(name = "locationName")
     private String locationName;
 
+    public CheckedInLocation(String longitude, String latitude, String time, String address, String locationName) {
+
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.time = time;
+        this.address = address;
+        this.locationName = locationName;
+
+
+    }
+
     public int getUid() {
         return uid;
     }
