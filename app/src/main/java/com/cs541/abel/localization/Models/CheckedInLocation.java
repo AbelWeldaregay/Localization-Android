@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class CheckedInLocation {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int uid;
 
     @ColumnInfo(name = "latitude")
@@ -18,6 +18,9 @@ public class CheckedInLocation {
 
     @ColumnInfo(name = "address")
     private String address;
+
+    @ColumnInfo(name = "time")
+    private String time;
 
     @ColumnInfo(name = "area")
     private String area;
@@ -70,6 +73,10 @@ public class CheckedInLocation {
         return locationName;
     }
 
+    public String getTime() {return time; }
+
+    public void setTime(String time) {this.time = time; }
+
     public void setUid(int uid) {
         this.uid = uid;
     }
@@ -105,4 +112,5 @@ public class CheckedInLocation {
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }
+
 }
