@@ -85,7 +85,7 @@ public class CheckedInLocationAdapter extends ArrayAdapter<CheckedInLocation> {
 
         }
 
-      //  holder.addressTextView.setText(address);
+        holder.addressTextView.setText(address);
         holder.locationNameTextview.setText(locationName);
         holder.timeTextView.setText(time);
         holder.latitudeTextView.setText(latitude);
