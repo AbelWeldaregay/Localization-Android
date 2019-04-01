@@ -1,4 +1,4 @@
-package com.cs541.abel.localization.Models;
+package com.cs541.abel.localization.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,9 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
+import com.cs541.abel.localization.Models.CheckedInLocation;
 import com.cs541.abel.localization.R;
-
 import java.util.ArrayList;
 
 public class CheckedInLocationAdapter extends ArrayAdapter<CheckedInLocation> {
@@ -63,6 +62,8 @@ public class CheckedInLocationAdapter extends ArrayAdapter<CheckedInLocation> {
         String address = getItem(position).getAddress();
         String locationName = getItem(position).getLocationName();
 
+        CheckedInLocation checkedInLocation = new CheckedInLocation(longitude, latitude, time, address, locationName);
+
         ViewHolder holder;
 
         if(convertView == null) {
@@ -71,12 +72,12 @@ public class CheckedInLocationAdapter extends ArrayAdapter<CheckedInLocation> {
             convertView = inflater.inflate(mResource, parent, false);
 
             holder = new ViewHolder();
-            holder.addressTextView = (TextView) convertView.findViewById(R.id.addressTextView);
+            holder.addressTextView = (TextView) convertView.findViewById(R.id.addressRowTextView);
             holder.latitudeTextView = (TextView) convertView.findViewById(R.id.latTextView);
             holder.longitudeTextView = (TextView) convertView.findViewById(R.id.longTextView);
             holder.timeTextView = (TextView) convertView.findViewById(R.id.timeTextView);
             holder.locationNameTextview = (TextView) convertView.findViewById(R.id.locationNameTextView);
-
+            convertView.setTag(holder);
 
         } else {
 
@@ -84,7 +85,7 @@ public class CheckedInLocationAdapter extends ArrayAdapter<CheckedInLocation> {
 
         }
 
-        holder.addressTextView.setText(address);
+      //  holder.addressTextView.setText(address);
         holder.locationNameTextview.setText(locationName);
         holder.timeTextView.setText(time);
         holder.latitudeTextView.setText(latitude);

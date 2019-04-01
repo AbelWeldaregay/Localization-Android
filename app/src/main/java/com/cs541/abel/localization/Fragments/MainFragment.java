@@ -1,6 +1,7 @@
 package com.cs541.abel.localization.Fragments;
 
 import android.Manifest;
+import android.arch.persistence.room.Dao;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,12 +21,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.cs541.abel.localization.Adapters.CheckedInLocationAdapter;
+import com.cs541.abel.localization.Models.CheckedInLocation;
+import com.cs541.abel.localization.Models.CheckedInLocationDao;
 import com.cs541.abel.localization.R;
-
 import java.io.IOException;
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,13 +44,15 @@ public class MainFragment extends Fragment {
     private TextView addressTextView;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private EditText locationName;
     private Button checkInButton;
     private Location lastLocation;
     private Criteria criteria;
-
+    private SQLiteDatabase sqLiteDatabase;
     Geocoder geocoder;
     List<Address> addresses;
     ListView locationsListView;
+    ArrayList<CheckedInLocation> checkedInLocations = new ArrayList<>();
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -71,11 +79,23 @@ public class MainFragment extends Fragment {
 
         this.longitudeTextView = view.findViewById(R.id.longitudeTextView);
         this.latitudeTextView = view.findViewById(R.id.latitudeTextView);
+
         this.addressTextView = view.findViewById(R.id.addressTextView);
         this.locationsListView = view.findViewById(R.id.locationsListView);
         this.checkInButton = view.findViewById(R.id.checkInButton);
+        this.locationName = view.findViewById(R.id.checkInNameEditText);
+
+        this.sqLiteDatabase = getActivity().openOrCreateDatabase("CheckedInLocations", Context.MODE_PRIVATE, null);
+
 
         this.criteria = new Criteria();
+
+
+
+       // CheckedInLocationAdapter checkedInLocationAdapter = new CheckedInLocationAdapter(getContext(), R.layout.locations_row, checkedInLocations);
+
+
+        //this.locationsListView.setAdapter(checkedInLocationAdapter);
 
         this.locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
@@ -93,6 +113,7 @@ public class MainFragment extends Fragment {
 
                     this.latitudeTextView.setText(Double.toString(this.lastLocation.getLatitude()));
                     this.longitudeTextView.setText(Double.toString(this.lastLocation.getLongitude()));
+                    Log.i("location : ", lastLocation.toString());
                     geocoder = new Geocoder(getContext(), Locale.getDefault());
 
 
@@ -109,7 +130,9 @@ public class MainFragment extends Fragment {
                         this.addressTextView.setText(fullAddress);
 
                     } catch (IOException e) {
+
                         e.printStackTrace();
+
                     }
 
                 }
@@ -118,19 +141,25 @@ public class MainFragment extends Fragment {
 
 
 
+
         this.checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                try {
 
-                    SQLiteDatabase sqLiteDatabase = getActivity().openOrCreateDatabase("CheckedInLocations", Context.MODE_PRIVATE, null);
 
-                } catch (Exception e) {
+                String nameOfLocation = locationName.getText().toString();
+                String address = addressTextView.getText().toString();
 
-                    e.printStackTrace();
+                CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(lastLocation.getLongitude()), Double.toString(lastLocation.getLatitude()),
+                        Long.toString(lastLocation.getTime()), address, nameOfLocation);
 
-                }
+                checkedInLocations.add(checkedInLocation);
+
+                CheckedInLocationAdapter checkedInLocationAdapter = new CheckedInLocationAdapter(getContext(),
+                        R.layout.locations_row, checkedInLocations);
+
+                locationsListView.setAdapter(checkedInLocationAdapter);
 
             }
         });
@@ -139,6 +168,7 @@ public class MainFragment extends Fragment {
 
 
         this.locationListener = new LocationListener() {
+
             @Override
             public void onLocationChanged(Location location) {
                 Log.i("Location: ", location.toString());
@@ -148,7 +178,6 @@ public class MainFragment extends Fragment {
 
                 try {
 
-                    addresses.clear();
                     addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     String address = addresses.get(0).getAddressLine(0);
                     String area = addresses.get(0).getLocality();

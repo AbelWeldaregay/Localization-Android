@@ -18,14 +18,14 @@
             android:id="@+id/latitudeTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Latitude"
+            android:text="Latitude Loading..."
             android:textSize="24sp" />
 
         <TextView
             android:id="@+id/longitudeTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Longitude"
+            android:text="Longitude Loading..."
             android:textSize="24sp" />
 
         <TextView
@@ -41,8 +41,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="check-in location name"
-            android:inputType="textPersonName"
-            android:text="Name" />
+            android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/checkInButton"
