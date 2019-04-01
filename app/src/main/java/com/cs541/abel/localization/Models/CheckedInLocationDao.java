@@ -7,6 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -16,7 +17,10 @@ public interface CheckedInLocationDao {
     List<CheckedInLocation> getAll();
 
     @Insert
-    void insertAll(CheckedInLocation... checkedInLocations);
+    void insertAll(ArrayList<CheckedInLocation> checkedInLocations);
+
+    @Insert
+    void insert(CheckedInLocation checkedInLocation);
 
     @Update
     void updateCheckedInLocations(CheckedInLocation... checkedInLocations);
