@@ -75,6 +75,63 @@ public class MainFragment extends Fragment {
     }
 
 
+    public void saveCheckedInLocation(final CheckedInLocation checkedInLocation) {
+
+        class saveCheckedInLocation extends AsyncTask<Void, Void, Void> {
+
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                //save the checked-in location
+                DatabaseClient.getInstance((getContext()).getApplicationContext()).getAppDatabase()
+                        .checkedInLocationDao()
+                        .insert(checkedInLocation);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                Toast.makeText(getContext(), "Location Saved", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        new saveCheckedInLocation().execute();
+
+    }
+
+    public void loadCheckedInLocations() {
+
+
+        class loadCheckedInLocations extends AsyncTask<Void, Void, ArrayList<CheckedInLocation>> {
+
+            @Override
+            protected ArrayList<CheckedInLocation> doInBackground(Void... voids) {
+
+               checkedInLocations = (ArrayList<CheckedInLocation>) DatabaseClient.getInstance((getContext()).getApplicationContext()).getAppDatabase()
+                        .checkedInLocationDao()
+                        .getAll();
+
+                return checkedInLocations;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<CheckedInLocation> checkedInLocations) {
+                super.onPostExecute(checkedInLocations);
+
+                final CheckedInLocationAdapter checkedInLocationAdapter = new CheckedInLocationAdapter(getContext(), R.layout.locations_row, checkedInLocations);
+                locationsListView.setAdapter(checkedInLocationAdapter);
+            }
+        }
+
+        new loadCheckedInLocations().execute();
+
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -133,6 +190,8 @@ public class MainFragment extends Fragment {
 
         }
 
+        loadCheckedInLocations();
+
 
 
 
@@ -154,28 +213,11 @@ public class MainFragment extends Fragment {
 
                 locationsListView.setAdapter(checkedInLocationAdapter);
 
-                class saveCheckedInLocation extends AsyncTask<Void, Void, Void> {
+                saveCheckedInLocation(checkedInLocation);
 
 
-                    @Override
-                    protected Void doInBackground(Void... voids) {
 
-                        //save the checked-in location
-                        DatabaseClient.getInstance((getContext()).getApplicationContext()).getAppDatabase()
-                                .checkedInLocationDao()
-                                .insert(checkedInLocation);
 
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
-                        Toast.makeText(getContext(), "Location Saved", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                new saveCheckedInLocation().execute();
 
             }
         });
