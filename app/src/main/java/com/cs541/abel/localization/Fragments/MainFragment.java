@@ -90,14 +90,8 @@ public class MainFragment extends Fragment {
 
         this.criteria = new Criteria();
 
-
-
-       // CheckedInLocationAdapter checkedInLocationAdapter = new CheckedInLocationAdapter(getContext(), R.layout.locations_row, checkedInLocations);
-
-
-        //this.locationsListView.setAdapter(checkedInLocationAdapter);
-
         this.locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
 
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
 
@@ -145,8 +139,6 @@ public class MainFragment extends Fragment {
         this.checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 
                 String nameOfLocation = locationName.getText().toString();
                 String address = addressTextView.getText().toString();
