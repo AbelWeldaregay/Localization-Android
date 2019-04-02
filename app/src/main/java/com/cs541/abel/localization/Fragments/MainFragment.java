@@ -26,10 +26,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.cs541.abel.localization.Adapters.CheckedInLocationAdapter;
 import com.cs541.abel.localization.Models.CheckedInLocation;
-import com.cs541.abel.localization.Models.CheckedInLocationDao;
 import com.cs541.abel.localization.Models.CheckedInLocationsDB;
 import com.cs541.abel.localization.Models.DatabaseClient;
 import com.cs541.abel.localization.R;
@@ -50,6 +48,7 @@ public class MainFragment extends Fragment {
     private EditText locationName;
     private Button checkInButton;
     private Location lastLocation;
+    private Location checkedInLocationTypeLocation;
     private Criteria criteria;
     private SQLiteDatabase sqLiteDatabase;
     private  CheckedInLocationsDB db;
@@ -77,6 +76,13 @@ public class MainFragment extends Fragment {
 
     public void saveCheckedInLocation(final CheckedInLocation checkedInLocation) {
 
+        this.checkedInLocationTypeLocation = new Location("checkedInLocation");
+        Double latitude = Double.parseDouble(checkedInLocation.getLatitude());
+        Double longitude = Double.parseDouble(checkedInLocation.getLongitude());
+
+        this.checkedInLocationTypeLocation.setLatitude(latitude);
+        this.checkedInLocationTypeLocation.setLongitude(longitude);
+
         class saveCheckedInLocation extends AsyncTask<Void, Void, Void> {
 
 
@@ -95,6 +101,12 @@ public class MainFragment extends Fragment {
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
 
+                checkedInLocations.add(checkedInLocation);
+
+                CheckedInLocationAdapter checkedInLocationAdapter = new CheckedInLocationAdapter(getContext(),
+                        R.layout.locations_row, checkedInLocations);
+
+                locationsListView.setAdapter(checkedInLocationAdapter);
                 Toast.makeText(getContext(), "Location Saved", Toast.LENGTH_SHORT).show();
             }
         }
@@ -121,6 +133,13 @@ public class MainFragment extends Fragment {
             @Override
             protected void onPostExecute(ArrayList<CheckedInLocation> checkedInLocations) {
                 super.onPostExecute(checkedInLocations);
+
+                  Double longitude = Double.parseDouble(checkedInLocations.get(checkedInLocations.size() - 1).getLongitude());
+                  Double latitude = Double.parseDouble(checkedInLocations.get(checkedInLocations.size() - 1).getLatitude());
+
+                  checkedInLocationTypeLocation = new Location("checkedInLocation");
+                  checkedInLocationTypeLocation.setLongitude(longitude);
+                  checkedInLocationTypeLocation.setLatitude(latitude);
 
                 final CheckedInLocationAdapter checkedInLocationAdapter = new CheckedInLocationAdapter(getContext(), R.layout.locations_row, checkedInLocations);
                 locationsListView.setAdapter(checkedInLocationAdapter);
@@ -206,18 +225,7 @@ public class MainFragment extends Fragment {
                 final CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(lastLocation.getLongitude()), Double.toString(lastLocation.getLatitude()),
                         Long.toString(lastLocation.getTime()), address, nameOfLocation);
 
-                checkedInLocations.add(checkedInLocation);
-
-                CheckedInLocationAdapter checkedInLocationAdapter = new CheckedInLocationAdapter(getContext(),
-                        R.layout.locations_row, checkedInLocations);
-
-                locationsListView.setAdapter(checkedInLocationAdapter);
-
                 saveCheckedInLocation(checkedInLocation);
-
-
-
-
 
             }
         });
