@@ -43,11 +43,26 @@
             android:hint="check-in location name"
             android:inputType="textPersonName" />
 
-        <Button
-            android:id="@+id/checkInButton"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Check In" />
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check In Location"
+                android:id="@+id/checkInButton"
+                android:layout_weight="1"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View on Google Maps"
+                android:id="@+id/viewOnGoogleMapsButton"
+                android:layout_weight="1"/>
+        </LinearLayout>
 
         <ListView
             android:id="@+id/locationsListView"

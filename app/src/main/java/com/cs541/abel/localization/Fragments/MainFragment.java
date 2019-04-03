@@ -3,6 +3,7 @@ package com.cs541.abel.localization.Fragments;
 import android.Manifest;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
@@ -26,7 +27,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.cs541.abel.localization.Activities.MainActivity;
 import com.cs541.abel.localization.Adapters.CheckedInLocationAdapter;
+import com.cs541.abel.localization.Activities.MapsActivity;
 import com.cs541.abel.localization.Models.CheckedInLocation;
 import com.cs541.abel.localization.Models.CheckedInLocationsDB;
 import com.cs541.abel.localization.Models.DatabaseClient;
@@ -50,7 +54,8 @@ public class MainFragment extends Fragment {
     private Location lastLocation;
     private Location checkedInLocationTypeLocation;
     private Criteria criteria;
-    private SQLiteDatabase sqLiteDatabase;
+
+    private Button openGoogleMapsButton;
     private  CheckedInLocationsDB db;
     Geocoder geocoder;
     List<Address> addresses;
@@ -148,7 +153,18 @@ public class MainFragment extends Fragment {
 
         new loadCheckedInLocations().execute();
 
+
+
+
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        locationManager.removeUpdates(locationListener);
+
+    }
+
 
 
     @Override
@@ -163,9 +179,19 @@ public class MainFragment extends Fragment {
         this.locationsListView = view.findViewById(R.id.locationsListView);
         this.checkInButton = view.findViewById(R.id.checkInButton);
         this.locationName = view.findViewById(R.id.checkInNameEditText);
-        this.sqLiteDatabase = getActivity().openOrCreateDatabase("CheckedInLocations", Context.MODE_PRIVATE, null);
         this.criteria = new Criteria();
         this.locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        this.openGoogleMapsButton = view.findViewById(R.id.viewOnGoogleMapsButton);
+
+
+        this.openGoogleMapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         this.db = Room.databaseBuilder(getContext(),
                 CheckedInLocationsDB.class, "checked_in_locations").build();
