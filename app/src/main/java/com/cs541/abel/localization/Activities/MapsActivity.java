@@ -5,11 +5,17 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import com.cs541.abel.localization.Models.CheckedInLocation;
 import com.cs541.abel.localization.Models.SavedLocation;
 import com.cs541.abel.localization.R;
@@ -28,6 +34,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     ArrayList<CheckedInLocation> checkedInLocations;
     ArrayList<SavedLocation> savedLocations;
+    Button shortestPathButton;
+    Marker selectedMarker;
+    Location myLastLocation = new Location("LAST_LOCATION");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +46,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
+
+        shortestPathButton = findViewById(R.id.shortestPathButton);
+        shortestPathButton.setVisibility(View.GONE);
         mapFragment.getMapAsync(this);
         savedLocations = MainActivity.getInstance().savedLocations;
 
@@ -46,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void addMarkers() {
 
         for(int i = 0; i < checkedInLocations.size(); i++) {
+
             LatLng tempLocation = new LatLng(Double.parseDouble(checkedInLocations.get(i).getLatitude()), Double.parseDouble(checkedInLocations.get(i).getLongitude()));
             String locationName = checkedInLocations.get(i).getLocationName();
             mMap.addMarker(new MarkerOptions().position(tempLocation).title(locationName));
@@ -82,8 +95,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         LatLng myLocation = new LatLng(intent.getDoubleExtra("latitude", -34), intent.getDoubleExtra("longitude", 151));
+
+        myLastLocation.setLongitude(myLocation.longitude);
+        myLastLocation.setLatitude(myLocation.latitude);
+
         // Add a marker in Sydney and move the camera
-       // LatLng sydney = new LatLng(-34, 151);
+        // LatLng sydney = new LatLng(-34, 151);
         //mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker in My Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, Float.parseFloat("12.0f")));
@@ -139,6 +156,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
+        shortestPathButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                double latitude1 = myLastLocation.getLatitude();
+                double longitude1 = myLastLocation.getLongitude();
+
+                double latitude2 = selectedMarker.getPosition().latitude;
+                double longitude2 = selectedMarker.getPosition().longitude;
+
+
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse("http://maps.google.com/maps?saddr=" + Double.toString(latitude1) +","+Double.toString(longitude1)+"&daddr="+Double.toString(latitude2)+","+Double.toString(longitude2)));
+                startActivity(intent);
+            }
+        });
+
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                shortestPathButton.setVisibility(View.VISIBLE);
+
+                selectedMarker = marker;
+
+                return false;
+            }
+        });
 
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
