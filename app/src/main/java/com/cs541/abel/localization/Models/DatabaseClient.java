@@ -9,14 +9,14 @@ public class DatabaseClient {
     private static DatabaseClient mInstance;
 
     //our app database object
-    private CheckedInLocationsDB appDatabase;
+    private AppDatabase appDatabase;
 
     private DatabaseClient(Context mCtx) {
         this.mCtx = mCtx;
 
         //creating the app database with Room database builder
         //MyToDos is the name of the database
-        appDatabase = Room.databaseBuilder(mCtx, CheckedInLocationsDB.class, "checkedInLocations").build();
+        appDatabase = Room.databaseBuilder(mCtx, AppDatabase.class, "appDatabase").build();
     }
 
     public static synchronized DatabaseClient getInstance(Context mCtx) {
@@ -26,7 +26,7 @@ public class DatabaseClient {
         return mInstance;
     }
 
-    public CheckedInLocationsDB getAppDatabase() {
+    public AppDatabase getAppDatabase() {
         return appDatabase;
     }
 

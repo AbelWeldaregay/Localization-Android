@@ -10,7 +10,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ import android.widget.Toast;
 import com.cs541.abel.localization.Adapters.CheckedInLocationAdapter;
 import com.cs541.abel.localization.Models.CheckedInLocation;
 import com.cs541.abel.localization.Models.DatabaseClient;
+import com.cs541.abel.localization.Models.SavedLocation;
 import com.cs541.abel.localization.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -54,13 +54,21 @@ public class MainActivity extends AppCompatActivity {
     Location lastCheckedInLocation;
     ListView locationsListView;
     ArrayList<CheckedInLocation> checkedInLocations = new ArrayList<>();
+    ArrayList<SavedLocation> savedLocations = new ArrayList<>();
 
-
+    /**
+     * Get the instance of MainActivity
+     * @return
+     */
     public static MainActivity getInstance() {
         return instance;
     }
 
 
+    /**
+     * OnCreate
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Send a request for a location update
+     */
     private void updateLocation() {
         buildLocationRequest();
 
@@ -120,7 +132,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Invoked when check-in button is clicked
+     * @param view
+     */
     public void checkInHandler(View view) {
+
         String locationName = (this.locationNameEditText.getText().toString()).trim();
         boolean validDistance = true;
 
@@ -151,18 +169,14 @@ public class MainActivity extends AppCompatActivity {
                     //Toast.makeText(this, "Location saved using previous location name" + temploc, Toast.LENGTH_SHORT).show();
                     Log.i("DISTANCE_TO_SHORT", temploc);
 
-
-
-
                     validDistance = false;
-
-
 
                 }
 
             }
 
             if(validDistance == true) {
+
                 if(locationName.isEmpty()) {
                     Toast.makeText(this, "Check-In name cannot be empty", Toast.LENGTH_SHORT).show();
                 } else {
@@ -178,13 +192,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-
-
             }
 
-
-
-            //2.
 
         } else {
 
@@ -207,6 +216,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Starts new intent to open google maps activity
+     * @param view
+     */
     public void viewOnGoogleMapsHandler(View view) {
 
         Intent intent = new Intent(this, MapsActivity.class);
@@ -223,6 +237,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void loadSavedLocations() {
+        // TODO
+    }
+
+
+    /**
+     * Save the location given
+     * @param savedLocation
+     */
+    public void saveLocation(final SavedLocation savedLocation) {
+
+        class saveLocation extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                DatabaseClient.getInstance(MainActivity.this.getApplicationContext()).getAppDatabase()
+                        .savedLocationDao()
+                        .insert(savedLocation);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                savedLocations.add(savedLocation);
+                Toast.makeText(MainActivity.this, "New Location Saved", Toast.LENGTH_SHORT).show();
+
+
+            }
+        }
+
+        new saveLocation().execute();
+
+
+    }
+
+    /**
+     * Writes the checked in location to mysqli database
+     * @param checkedInLocation
+     */
     public void saveCheckedInLocation(final CheckedInLocation checkedInLocation) {
 
 
@@ -259,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
     private PendingIntent getPendingIntent() {
 
         Intent intent = new Intent(this, MyLocationService.class);
@@ -268,6 +322,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Loads all the checked-in locations to checkedInLocations ArrayList
+     */
     public void loadCheckedInLocations() {
 
 
@@ -320,6 +377,7 @@ public class MainActivity extends AppCompatActivity {
                 longitudeTextView.setText(longitude);
                 latitudeTextView.setText(latitude);
                 addressTextView.setText(address);
+
             }
         });
 
@@ -333,6 +391,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Returns a string address of the given lat and long
+     * @param LATITUDE
+     * @param LONGITUDE
+     * @return
+     */
     @SuppressLint("LongLogTag")
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
