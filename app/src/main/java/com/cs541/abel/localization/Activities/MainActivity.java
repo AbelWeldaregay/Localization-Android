@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        loadSavedLocations();
         instance = this;
 
         latitudeTextView = findViewById(R.id.latitudeTextView);
@@ -139,80 +140,76 @@ public class MainActivity extends AppCompatActivity {
      */
     public void checkInHandler(View view) {
 
-        String locationName = (this.locationNameEditText.getText().toString()).trim();
-        boolean validDistance = true;
 
-        if(checkedInLocations.size() != 0) {
+        Location checkInLocation = this.lastKnownLocation;
 
-            //1. loop through entire checked in locations
-
-            for(int i = 0; i < checkedInLocations.size(); i++) {
-
-                double longitude = Double.parseDouble(checkedInLocations.get(i).getLongitude());
-                double latitude = Double.parseDouble(checkedInLocations.get(i).getLatitude());
-                String perviousName = checkedInLocations.get(i).getLocationName();
-                String prevousTime = checkedInLocations.get(i).getTime();
-                String previousAddress = checkedInLocations.get(i).getAddress();
-
-                Location tempLocation = new Location("TEMP_LOCATION");
-                tempLocation.setLongitude(longitude);
-                tempLocation.setLatitude(latitude);
-
-                if(lastKnownLocation.distanceTo(tempLocation) <= 30.00) {
+        String checkInLong = Double.toString(checkInLocation.getLongitude());
+        String checkInLat = Double.toString(checkInLocation.getLatitude());
+        String checkInName = locationNameEditText.getText().toString();
 
 
-                    String temploc = Double.toString(lastKnownLocation.distanceTo(tempLocation));
+        String checkInTime = (new java.util.Date()).toString();
+        String checkInAddress = getCompleteAddressString(checkInLocation.getLatitude(), checkInLocation.getLongitude());
 
-                    CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(longitude), Double.toString(latitude), prevousTime, previousAddress, perviousName );
-                    saveCheckedInLocation(checkedInLocation);
+        CheckedInLocation checkedInLocation = new CheckedInLocation(checkInLong, checkInLat, checkInTime, checkInAddress, checkInName);
+        SavedLocation savedLocation = new SavedLocation(checkInName, checkInLat, checkInLong, checkInAddress);
 
-                    //Toast.makeText(this, "Location saved using previous location name" + temploc, Toast.LENGTH_SHORT).show();
-                    Log.i("DISTANCE_TO_SHORT", temploc);
 
-                    validDistance = false;
+        /**
+         * 1. find the closest saved location to the check-in location
+         */
+        if(savedLocations.size() != 0) {
+
+            Location tempLocation = new Location("TEMP_LOCATION");
+            tempLocation.setLongitude(Double.parseDouble(savedLocations.get(0).getLongitude()));
+            tempLocation.setLatitude(Double.parseDouble(savedLocations.get(0).getLatitude()));
+
+            double shortestDistance = checkInLocation.distanceTo(tempLocation);
+            int closestLocationIndex = 0;
+
+            for(int i = 1; i < savedLocations.size(); i++) {
+
+                tempLocation.setLatitude(Double.parseDouble(savedLocations.get(i).getLatitude()));
+                tempLocation.setLongitude(Double.parseDouble(savedLocations.get(i).getLongitude()));
+
+                if(checkInLocation.distanceTo(tempLocation) < shortestDistance) {
+
+                    closestLocationIndex = i;
+                    shortestDistance = checkInLocation.distanceTo(tempLocation);
 
                 }
 
             }
 
-            if(validDistance == true) {
+            tempLocation.setLongitude(Double.parseDouble(savedLocations.get(closestLocationIndex).getLongitude()));
+            tempLocation.setLatitude(Double.parseDouble(savedLocations.get(closestLocationIndex).getLatitude()));
 
-                if(locationName.isEmpty()) {
-                    Toast.makeText(this, "Check-In name cannot be empty", Toast.LENGTH_SHORT).show();
-                } else {
+            if(checkInLocation.distanceTo(tempLocation) <= 30) {
 
-                    Double latitude = this.lastKnownLocation.getLatitude();
-                    Double longitude = this.lastKnownLocation.getLongitude();
-                    String locationAddress = getCompleteAddressString(latitude, longitude);
-                    String time = Double.toString(this.lastKnownLocation.getTime());
+                String longitude = savedLocations.get(closestLocationIndex).getLongitude();
+                String latitude = savedLocations.get(closestLocationIndex).getLatitude();
+                String address = savedLocations.get(closestLocationIndex).getAddress();
+                String locationName = savedLocations.get(closestLocationIndex).getLocationName();
+                String time = (new java.util.Date()).toString();
 
-                    CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(longitude), Double.toString(latitude), time, locationAddress, locationName);
+                CheckedInLocation newCheckIn = new CheckedInLocation(longitude, latitude, time, address, locationName);
+                saveCheckedInLocation(newCheckIn);
 
-                    saveCheckedInLocation(checkedInLocation);
 
-                }
+            } else {
 
+                saveCheckedInLocation(checkedInLocation);
+                saveLocation(savedLocation);
             }
 
 
         } else {
 
-            if(locationName.isEmpty()) {
-                Toast.makeText(this, "Check-In name cannot be empty", Toast.LENGTH_SHORT).show();
-            } else {
-
-                Double latitude = this.lastKnownLocation.getLatitude();
-                Double longitude = this.lastKnownLocation.getLongitude();
-                String locationAddress = getCompleteAddressString(latitude, longitude);
-                String time = Double.toString(this.lastKnownLocation.getTime());
-
-                CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(longitude), Double.toString(latitude), time, locationAddress, locationName);
-
-                saveCheckedInLocation(checkedInLocation);
-
-            }
-
+            saveCheckedInLocation(checkedInLocation);
+            saveLocation(savedLocation);
         }
+
+
 
     }
 
@@ -238,7 +235,23 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void loadSavedLocations() {
-        // TODO
+
+
+        class LoadSavedLocations extends AsyncTask<Void, Void, ArrayList<SavedLocation>> {
+
+            @Override
+            protected ArrayList<SavedLocation> doInBackground(Void... voids) {
+
+                savedLocations = (ArrayList<SavedLocation>) DatabaseClient.getInstance((MainActivity.this).getApplicationContext()).getAppDatabase()
+                        .savedLocationDao()
+                        .getAll();
+
+                return savedLocations;
+            }
+
+        }
+
+        new LoadSavedLocations().execute();
     }
 
 
@@ -254,7 +267,9 @@ public class MainActivity extends AppCompatActivity {
             protected Void doInBackground(Void... voids) {
 
                 DatabaseClient.getInstance(MainActivity.this.getApplicationContext()).getAppDatabase()
+
                         .savedLocationDao()
+
                         .insert(savedLocation);
                 return null;
             }
@@ -398,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
      * @return
      */
     @SuppressLint("LongLogTag")
-    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+    public String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {

@@ -11,6 +11,9 @@ public class SavedLocation implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int uid;
 
+    @ColumnInfo(name = "location_name")
+    private String locationName;
+
     @ColumnInfo(name = "latitude")
     private String latitude;
 
@@ -20,11 +23,21 @@ public class SavedLocation implements Serializable {
     @ColumnInfo(name = "address")
     private String address;
 
-    public SavedLocation(int uid, String latitude, String longitude, String address) {
-        this.uid = uid;
+    public SavedLocation(String locationName, String latitude, String longitude, String address) {
+
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+        this.locationName = locationName;
+
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public String getLocationName() {
+        return locationName;
     }
 
     public void setLatitude(String latitude) {

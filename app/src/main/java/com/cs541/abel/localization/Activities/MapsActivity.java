@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
 import com.cs541.abel.localization.Models.CheckedInLocation;
+import com.cs541.abel.localization.Models.SavedLocation;
 import com.cs541.abel.localization.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -103,11 +104,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
+                            String locationName = locationNameEditText.getText().toString();
+                            String address = MainActivity.getInstance().getCompleteAddressString(latLng.latitude, latLng.longitude);
                             //1. add marker
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(locationNameEditText.getText().toString()))
+                            mMap.addMarker(new MarkerOptions().position(latLng).title(locationName))
                                     .setDraggable(true);
 
                             //2. add location to db
+                            SavedLocation savedLocation = new SavedLocation(locationName ,Double.toString(latLng.latitude), Double.toString(latLng.longitude), address);
+
+                            MainActivity.getInstance().saveLocation(savedLocation);
 
                         }
                     });
