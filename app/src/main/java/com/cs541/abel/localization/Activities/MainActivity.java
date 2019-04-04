@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.cs541.abel.localization.Adapters.CheckedInLocationAdapter;
 import com.cs541.abel.localization.Models.CheckedInLocation;
 import com.cs541.abel.localization.Models.DatabaseClient;
@@ -34,7 +33,6 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -50,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     TextView addressTextView;
     EditText locationNameEditText;
     Location lastKnownLocation;
+    Location lastCheckedInLocation;
     ListView locationsListView;
     ArrayList<CheckedInLocation> checkedInLocations = new ArrayList<>();
 
@@ -72,6 +71,18 @@ public class MainActivity extends AppCompatActivity {
         locationNameEditText = findViewById(R.id.checkInNameEditText);
         locationsListView = findViewById(R.id.locationsListView);
         loadCheckedInLocations();
+
+        if(checkedInLocations.size() != 0) {
+
+            double longitude = Double.parseDouble(checkedInLocations.get(checkedInLocations.size() - 1).getLongitude());
+            double latitude = Double.parseDouble(checkedInLocations.get(checkedInLocations.size() - 1).getLatitude());
+
+            lastCheckedInLocation.setLongitude(longitude);
+            lastCheckedInLocation.setLatitude(latitude);
+
+        }
+
+
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
@@ -108,23 +119,89 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkInHandler(View view) {
         String locationName = (this.locationNameEditText.getText().toString()).trim();
+        boolean validDistance = true;
+
+        if(checkedInLocations.size() != 0) {
+
+            //1. loop through entire checked in locations
+
+            for(int i = 0; i < checkedInLocations.size(); i++) {
+
+                double longitude = Double.parseDouble(checkedInLocations.get(i).getLongitude());
+                double latitude = Double.parseDouble(checkedInLocations.get(i).getLatitude());
+                String perviousName = checkedInLocations.get(i).getLocationName();
+                String prevousTime = checkedInLocations.get(i).getTime();
+                String previousAddress = checkedInLocations.get(i).getAddress();
+
+                Location tempLocation = new Location("TEMP_LOCATION");
+                tempLocation.setLongitude(longitude);
+                tempLocation.setLatitude(latitude);
+
+                if(lastKnownLocation.distanceTo(tempLocation) <= 30.00) {
+
+
+                    String temploc = Double.toString(lastKnownLocation.distanceTo(tempLocation));
+
+                    CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(longitude), Double.toString(latitude), prevousTime, previousAddress, perviousName );
+                    saveCheckedInLocation(checkedInLocation);
+
+                    //Toast.makeText(this, "Location saved using previous location name" + temploc, Toast.LENGTH_SHORT).show();
+                    Log.i("DISTANCE_TO_SHORT", temploc);
 
 
 
-        if(locationName.isEmpty()) {
-            Toast.makeText(this, "Check-In name cannot be empty", Toast.LENGTH_SHORT).show();
+
+                    validDistance = false;
+
+
+
+                }
+
+            }
+
+            if(validDistance == true) {
+                if(locationName.isEmpty()) {
+                    Toast.makeText(this, "Check-In name cannot be empty", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    Double latitude = this.lastKnownLocation.getLatitude();
+                    Double longitude = this.lastKnownLocation.getLongitude();
+                    String locationAddress = getCompleteAddressString(latitude, longitude);
+                    String time = Double.toString(this.lastKnownLocation.getTime());
+
+                    CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(longitude), Double.toString(latitude), time, locationAddress, locationName);
+
+                    saveCheckedInLocation(checkedInLocation);
+
+                }
+
+
+
+            }
+
+
+
+            //2.
+
         } else {
 
-            Double latitude = this.lastKnownLocation.getLatitude();
-            Double longitude = this.lastKnownLocation.getLongitude();
-            String locationAddress = getCompleteAddressString(latitude, longitude);
-            String time = Double.toString(this.lastKnownLocation.getTime());
+            if(locationName.isEmpty()) {
+                Toast.makeText(this, "Check-In name cannot be empty", Toast.LENGTH_SHORT).show();
+            } else {
 
-            CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(longitude), Double.toString(latitude), time, locationAddress, locationName);
+                Double latitude = this.lastKnownLocation.getLatitude();
+                Double longitude = this.lastKnownLocation.getLongitude();
+                String locationAddress = getCompleteAddressString(latitude, longitude);
+                String time = Double.toString(this.lastKnownLocation.getTime());
 
-            saveCheckedInLocation(checkedInLocation);
+                CheckedInLocation checkedInLocation = new CheckedInLocation(Double.toString(longitude), Double.toString(latitude), time, locationAddress, locationName);
+
+                saveCheckedInLocation(checkedInLocation);
+
+            }
 
         }
+
     }
 
     public void viewOnGoogleMapsHandler(View view) {
@@ -207,13 +284,11 @@ public class MainActivity extends AppCompatActivity {
 
         new loadCheckedInLocations().execute();
 
-
-
-
     }
 
 
     private void buildLocationRequest() {
+
         locationRequest = new LocationRequest();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(5000);
@@ -235,12 +310,8 @@ public class MainActivity extends AppCompatActivity {
                 longitudeTextView.setText(longitude);
                 latitudeTextView.setText(latitude);
                 addressTextView.setText(address);
-
-
             }
         });
-
-
 
     }
 
