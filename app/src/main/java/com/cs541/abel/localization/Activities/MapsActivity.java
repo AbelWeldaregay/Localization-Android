@@ -1,6 +1,8 @@
 package com.cs541.abel.localization.Activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -8,6 +10,9 @@ import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.cs541.abel.localization.Adapters.CheckedInLocationAdapter;
 import com.cs541.abel.localization.Models.CheckedInLocation;
@@ -19,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -90,6 +96,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
             mMap.addMarker(new MarkerOptions().position(tempLocation).title(locationName));
+
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(final LatLng latLng) {
+
+                   String longitude = Double.toString(latLng.longitude);
+                   String latitude = Double.toString(latLng.latitude);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    builder.setTitle("Location Information");
+
+                    final EditText locationNameEditText = new EditText(MapsActivity.this);
+                    locationNameEditText.setHint("Location Name");
+                    locationNameEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(locationNameEditText);
+
+                    builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            //1. add marker
+                            mMap.addMarker(new MarkerOptions().position(latLng).title(locationNameEditText.getText().toString()))
+                                    .setDraggable(true);
+
+                            //2. add location to db
+
+                        }
+                    });
+
+                   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                       }
+                   });
+
+                   builder.show();
+
+                }
+            });
+
+
 
         }
 
