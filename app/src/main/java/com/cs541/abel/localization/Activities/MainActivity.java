@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -207,6 +210,13 @@ public class MainActivity extends AppCompatActivity {
     public void viewOnGoogleMapsHandler(View view) {
 
         Intent intent = new Intent(this, MapsActivity.class);
+
+        intent.putExtra("longitude", this.lastKnownLocation.getLongitude());
+        intent.putExtra("latitude", this.lastKnownLocation.getLatitude());
+        Bundle args = new Bundle();
+        args.putSerializable("ARRAYLIST", (Serializable) this.checkedInLocations);
+        intent.putExtras(args);
+
 
         startActivity(intent);
 
