@@ -255,6 +255,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    public void updateLocation(final SavedLocation savedLocation) {
+
+        class UpdateLocation extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                DatabaseClient.getInstance(MainActivity.this.getApplicationContext()).getAppDatabase()
+                        .savedLocationDao()
+                        .updateSavedLocations(savedLocation);
+                return null;
+            }
+        }
+
+    }
+
+
     /**
      * Save the location given
      * @param savedLocation

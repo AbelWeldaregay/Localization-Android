@@ -18,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     ArrayList<CheckedInLocation> checkedInLocations;
+    ArrayList<SavedLocation> savedLocations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +37,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-
         mapFragment.getMapAsync(this);
+        savedLocations = MainActivity.getInstance().savedLocations;
 
 
+    }
+
+    public void addMarkers() {
+
+        for(int i = 0; i < checkedInLocations.size(); i++) {
+            LatLng tempLocation = new LatLng(Double.parseDouble(checkedInLocations.get(i).getLatitude()), Double.parseDouble(checkedInLocations.get(i).getLongitude()));
+            String locationName = checkedInLocations.get(i).getLocationName();
+            mMap.addMarker(new MarkerOptions().position(tempLocation).title(locationName));
+        }
     }
 
 
@@ -77,60 +88,95 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, Float.parseFloat("12.0f")));
 
-        for(int i = 0; i < checkedInLocations.size(); i++) {
-
-            LatLng tempLocation = new LatLng(Double.parseDouble(checkedInLocations.get(i).getLatitude()), Double.parseDouble(checkedInLocations.get(i).getLongitude()));
-            String locationName = checkedInLocations.get(i).getLocationName();
+        addMarkers();
 
 
-            mMap.addMarker(new MarkerOptions().position(tempLocation).title(locationName));
 
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(final LatLng latLng) {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(final LatLng latLng) {
 
-                   String longitude = Double.toString(latLng.longitude);
-                   String latitude = Double.toString(latLng.latitude);
+                String longitude = Double.toString(latLng.longitude);
+                String latitude = Double.toString(latLng.latitude);
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                    builder.setTitle("Location Information");
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setTitle("Location Information");
 
-                    final EditText locationNameEditText = new EditText(MapsActivity.this);
-                    locationNameEditText.setHint("Location Name");
-                    locationNameEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-                    builder.setView(locationNameEditText);
+                final EditText locationNameEditText = new EditText(MapsActivity.this);
+                locationNameEditText.setHint("Location Name");
+                locationNameEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(locationNameEditText);
 
-                    builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                            String locationName = locationNameEditText.getText().toString();
-                            String address = MainActivity.getInstance().getCompleteAddressString(latLng.latitude, latLng.longitude);
-                            //1. add marker
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(locationName))
-                                    .setDraggable(true);
+                        String locationName = locationNameEditText.getText().toString();
+                        String address = MainActivity.getInstance().getCompleteAddressString(latLng.latitude, latLng.longitude);
+                        //1. add marker
+                        mMap.addMarker(new MarkerOptions().position(latLng).title(locationName))
+                                .setDraggable(true);
 
-                            //2. add location to db
-                            SavedLocation savedLocation = new SavedLocation(locationName ,Double.toString(latLng.latitude), Double.toString(latLng.longitude), address);
+                        //2. add location to db
+                        SavedLocation savedLocation = new SavedLocation(locationName ,Double.toString(latLng.latitude), Double.toString(latLng.longitude), address);
 
-                            MainActivity.getInstance().saveLocation(savedLocation);
+                        MainActivity.getInstance().saveLocation(savedLocation);
 
-                        }
-                    });
+                    }
+                });
 
-                   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                       }
-                   });
+                    }
+                });
 
-                   builder.show();
+                builder.show();
 
+
+            }
+        });
+
+
+
+
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+                String locationName = marker.getTitle();
+                int draggedIndex = 0;
+
+                for(int i = 0; i < savedLocations.size(); i++) {
+
+                    if(savedLocations.get(i).getLocationName().equals(locationName)) {
+                        draggedIndex = i;
+                    }
                 }
-            });
 
-        }
+                String newLatitude = Double.toString(marker.getPosition().longitude);
+                String newLongitude = Double.toString(marker.getPosition().latitude);
+
+                savedLocations.get(draggedIndex).setLatitude(newLatitude);
+                savedLocations.get(draggedIndex).setLongitude(newLongitude);
+
+                MainActivity.getInstance().updateLocation(savedLocations.get(draggedIndex));
+
+
+
+            }
+        });
 
 
 
