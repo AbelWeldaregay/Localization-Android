@@ -14,8 +14,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
+import com.cs541.abel.localization.Adapters.CustomInfoWindowAdapter;
 import com.cs541.abel.localization.Models.CheckedInLocation;
 import com.cs541.abel.localization.Models.SavedLocation;
 import com.cs541.abel.localization.R;
@@ -55,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
     public void addMarkers() {
 
         for(int i = 0; i < checkedInLocations.size(); i++) {
@@ -64,7 +64,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(new MarkerOptions().position(tempLocation).title(locationName));
         }
     }
-
 
     /**
      * Manipulates the map once available.
@@ -94,6 +93,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
+        // Setting a custom info window adapter for the google map
+        CustomInfoWindowAdapter markerInfoWindowAdapter = new CustomInfoWindowAdapter(getApplicationContext());
+        googleMap.setInfoWindowAdapter(markerInfoWindowAdapter);
         LatLng myLocation = new LatLng(intent.getDoubleExtra("latitude", -34), intent.getDoubleExtra("longitude", 151));
 
         myLastLocation.setLongitude(myLocation.longitude);
