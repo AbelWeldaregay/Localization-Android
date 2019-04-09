@@ -152,47 +152,58 @@ public class MainActivity extends AppCompatActivity {
 
         CheckedInLocation checkedInLocation = new CheckedInLocation(checkInLong, checkInLat, checkInTime, checkInAddress, checkInName);
         SavedLocation savedLocation = new SavedLocation(checkInName, checkInLat, checkInLong, checkInAddress);
+        checkInName.trim();
 
+        if(checkInName == null || checkInName.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Location Name Cannot be Empty", Toast.LENGTH_SHORT).show();
+        } else {
 
-        /**
-         * 1. find the closest saved location to the check-in location
-         */
-        if(savedLocations.size() != 0) {
+            /**
+             * 1. find the closest saved location to the check-in location
+             */
+            if(savedLocations.size() != 0) {
 
-            Location tempLocation = new Location("TEMP_LOCATION");
-            tempLocation.setLongitude(Double.parseDouble(savedLocations.get(0).getLongitude()));
-            tempLocation.setLatitude(Double.parseDouble(savedLocations.get(0).getLatitude()));
+                Location tempLocation = new Location("TEMP_LOCATION");
+                tempLocation.setLongitude(Double.parseDouble(savedLocations.get(0).getLongitude()));
+                tempLocation.setLatitude(Double.parseDouble(savedLocations.get(0).getLatitude()));
 
-            double shortestDistance = checkInLocation.distanceTo(tempLocation);
-            int closestLocationIndex = 0;
+                double shortestDistance = checkInLocation.distanceTo(tempLocation);
+                int closestLocationIndex = 0;
 
-            for(int i = 1; i < savedLocations.size(); i++) {
+                for(int i = 1; i < savedLocations.size(); i++) {
 
-                tempLocation.setLatitude(Double.parseDouble(savedLocations.get(i).getLatitude()));
-                tempLocation.setLongitude(Double.parseDouble(savedLocations.get(i).getLongitude()));
+                    tempLocation.setLatitude(Double.parseDouble(savedLocations.get(i).getLatitude()));
+                    tempLocation.setLongitude(Double.parseDouble(savedLocations.get(i).getLongitude()));
 
-                if(checkInLocation.distanceTo(tempLocation) < shortestDistance) {
+                    if(checkInLocation.distanceTo(tempLocation) < shortestDistance) {
 
-                    closestLocationIndex = i;
-                    shortestDistance = checkInLocation.distanceTo(tempLocation);
+                        closestLocationIndex = i;
+                        shortestDistance = checkInLocation.distanceTo(tempLocation);
+
+                    }
 
                 }
 
-            }
+                tempLocation.setLongitude(Double.parseDouble(savedLocations.get(closestLocationIndex).getLongitude()));
+                tempLocation.setLatitude(Double.parseDouble(savedLocations.get(closestLocationIndex).getLatitude()));
 
-            tempLocation.setLongitude(Double.parseDouble(savedLocations.get(closestLocationIndex).getLongitude()));
-            tempLocation.setLatitude(Double.parseDouble(savedLocations.get(closestLocationIndex).getLatitude()));
+                if(checkInLocation.distanceTo(tempLocation) <= 30) {
 
-            if(checkInLocation.distanceTo(tempLocation) <= 30) {
+                    String longitude = savedLocations.get(closestLocationIndex).getLongitude();
+                    String latitude = savedLocations.get(closestLocationIndex).getLatitude();
+                    String address = savedLocations.get(closestLocationIndex).getAddress();
+                    String locationName = savedLocations.get(closestLocationIndex).getLocationName();
+                    String time = (new java.util.Date()).toString();
 
-                String longitude = savedLocations.get(closestLocationIndex).getLongitude();
-                String latitude = savedLocations.get(closestLocationIndex).getLatitude();
-                String address = savedLocations.get(closestLocationIndex).getAddress();
-                String locationName = savedLocations.get(closestLocationIndex).getLocationName();
-                String time = (new java.util.Date()).toString();
+                    CheckedInLocation newCheckIn = new CheckedInLocation(longitude, latitude, time, address, locationName);
+                    saveCheckedInLocation(newCheckIn);
 
-                CheckedInLocation newCheckIn = new CheckedInLocation(longitude, latitude, time, address, locationName);
-                saveCheckedInLocation(newCheckIn);
+
+                } else {
+
+                    saveCheckedInLocation(checkedInLocation);
+                    saveLocation(savedLocation);
+                }
 
 
             } else {
@@ -202,12 +213,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-        } else {
-
-            saveCheckedInLocation(checkedInLocation);
-            saveLocation(savedLocation);
         }
-
 
 
     }
@@ -335,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                         R.layout.locations_row, checkedInLocations);
 
                 locationsListView.setAdapter(checkedInLocationAdapter);
-                Toast.makeText(MainActivity.this, "Location Saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Check-In Saved", Toast.LENGTH_SHORT).show();
             }
         }
 
