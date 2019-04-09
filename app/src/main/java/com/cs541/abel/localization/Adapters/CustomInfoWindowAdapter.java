@@ -1,14 +1,9 @@
 package com.cs541.abel.localization.Adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.cs541.abel.localization.Activities.MapsActivity;
 import com.cs541.abel.localization.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
