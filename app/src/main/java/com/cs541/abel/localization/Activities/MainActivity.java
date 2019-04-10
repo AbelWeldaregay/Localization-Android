@@ -408,9 +408,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                String longitude = Double.toString(location.getLongitude());
-                String latitude = Double.toString(location.getLatitude());
-                String address = getCompleteAddressString(location.getLatitude(), location.getLongitude());
+                String longitude = "Longitude: " + Double.toString(location.getLongitude());
+                String latitude = "Latitude: " + Double.toString(location.getLatitude());
+                String address = "Address: " + getCompleteAddressString(location.getLatitude(), location.getLongitude());
                 longitudeTextView.setText(longitude);
                 latitudeTextView.setText(latitude);
                 addressTextView.setText(address);
