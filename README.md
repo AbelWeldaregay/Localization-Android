@@ -1,13 +1,14 @@
 # Localization - Android
 
-A mobile application to keep track of your visits to your favorite places. 
+A mobile application that streamlines the need to save and caluclate the shortest route to your favorite places. 
 
 # Key Features
 - Google Maps API
 - Finding shortest path between two locations
-- Location Check-Ins
-- Saving locations
-- Lat & Lang -> Address
+- Calculating address given the latitude and longitude
+- Checking-In to a location
+- Saving your current location
+- Saving a location from the google maps activity
 
 # Screenshots - Potrait
 
