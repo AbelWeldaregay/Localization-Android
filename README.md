@@ -1,6 +1,6 @@
 # Localization - Android
 
-A mobile application that streamlines the need to save and caluclate the shortest route to your favorite places. 
+A mobile application that streamlines the need to save and calculate the shortest route to your favorite places. 
 
 # Key Features
 - Google Maps API
