@@ -43,8 +43,8 @@ open -a /Applications/Android\ Studio.app ~/my_android_project
 * [Gitlab CI](https://gitlab.com/AbelWeldaregay/Localization-Android) - Gitlab CI for continous Integration
 
 ## Documentation
-* [https://www.google.com](JavaDoc)
-* [https://www.google.com](SpotBugs)
+* [JavaDoc](https://www.google.com)
+* [SpotBugs](https://www.google.com)
 
 ## Author
 - Abel Weldaregay
