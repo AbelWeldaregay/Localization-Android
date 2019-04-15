@@ -2,7 +2,7 @@
 
 A mobile application that streamlines the need to save and calculate the shortest route to your favorite places. 
 
-# Key Features
+## Key Features
 - Integration of Google Maps API
 - Finding shortest path between two locations
 - Calculating address given the latitude and longitude
@@ -10,9 +10,28 @@ A mobile application that streamlines the need to save and calculate the shortes
 - Saving your current location
 - Saving a location from the google maps activity
 
-# Author
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+### Prerequisites
+- Android Studios
+   - [Download Here](https://developer.android.com/studio)
+
+### Installing
+
+- Open the terminal on Mac or Bash on Windows
+- CD to the desired directory
+- Give the following commands to initialize a git repository and clone the project
+
+```
+git init .
+git clone https://github.com/AbelWeldaregay/Localization-Android.git
+```
+
+## Author
 - Abel Weldaregay
 
-# Screenshots - Potrait
+## Screenshots - Potrait
 
-# Screenshots - Landscape
+## Screenshots - Landscape
