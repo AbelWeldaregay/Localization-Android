@@ -36,7 +36,10 @@ git clone https://github.com/AbelWeldaregay/Localization-Android.git
 open -a /Applications/Android\ Studio.app ~/my_android_project
 
 ```
+## Built With
 
+* [Google Maps - Android](https://developers.google.com/maps/documentation/android-sdk/intro) - Google Maps API for Android used
+* [Gradle](https://gradle.org/) - Build and Dependency Management
 
 ## Author
 - Abel Weldaregay
