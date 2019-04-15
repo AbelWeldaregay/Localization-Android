@@ -42,6 +42,10 @@ open -a /Applications/Android\ Studio.app ~/my_android_project
 * [Gradle](https://gradle.org/) - Build and Dependency Management
 * [Gitlab CI](https://gitlab.com/AbelWeldaregay/Localization-Android) - Gitlab CI for continous Integration
 
+## Documentation
+* [https://www.google.com](JavaDoc)
+* [https://www.google.com](SpotBugs)
+
 ## Author
 - Abel Weldaregay
 
