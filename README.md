@@ -9,11 +9,10 @@ A mobile application that streamlines the need to save and calculate the shortes
 - Checking-In to a location
 - Saving your current location
 - Saving a location from the google maps activity
-# Design Decisions 
-### Database Design
-### Adapters
-### Models
-### Activites
+
+# Author
+- Abel Weldaregay
+
 # Screenshots - Potrait
 
 # Screenshots - Landscape
