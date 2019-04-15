@@ -28,6 +28,15 @@ These instructions will get you a copy of the project up and running on your loc
 git init .
 git clone https://github.com/AbelWeldaregay/Localization-Android.git
 ```
+### Running
+- CD to the project directory cloned from the step above
+- Give the following command to open the project using android studios which will automatically build the project
+
+```
+open -a /Applications/Android\ Studio.app ~/my_android_project
+
+```
+
 
 ## Author
 - Abel Weldaregay
