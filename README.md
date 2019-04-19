@@ -49,6 +49,9 @@ open -a /Applications/Android\ Studio.app ~/my_android_project
 ## Author
 - Abel Weldaregay
 
+## Future Plans
+- Will be rewritten in Kotlin
+
 ## Screenshots - Potrait
 
 ## Screenshots - Landscape
