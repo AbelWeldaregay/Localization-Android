@@ -42,16 +42,14 @@ open -a /Applications/Android\ Studio.app ~/my_android_project
 * [Gradle](https://gradle.org/) - Build and Dependency Management
 * [Gitlab CI](https://gitlab.com/AbelWeldaregay/Localization-Android) - Gitlab CI for continous Integration
 
-## Documentation
-* [JavaDoc](https://www.google.com)
-* [SpotBugs](https://www.google.com)
-
 ## Author
 - Abel Weldaregay
 
-## Future Plans
-- Will be rewritten in Kotlin
-
-## Screenshots - Potrait
-
-## Screenshots - Landscape
+## Screenshots
+<p float="left">
+<img width=300 src = "https://github.com/AbelWeldaregay/Localization-Android/blob/master/MainActivityScreenshot.png">
+  &nbsp
+<img width=300 src = "https://github.com/AbelWeldaregay/Localization-Android/blob/master/MapsActivityScreenshot.png">
+  &nbsp
+   
+</p>
