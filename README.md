@@ -44,6 +44,7 @@ open -a /Applications/Android\ Studio.app ~/my_android_project
 
 ## Author
 - Abel Weldaregay
+- abelweldaregay@gmail.com
 
 ## Screenshots
 <p float="left">
